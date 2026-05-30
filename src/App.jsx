@@ -134,10 +134,25 @@ function getTimeLeft() {
 function FloatingStone({ className = "", delay = 0 }) {
   return (
     <motion.div
-      className={`absolute rounded-[38%_62%_48%_52%] bg-gradient-to-br from-amber-200/30 via-stone-200/20 to-white/10 blur-[0.2px] ${className}`}
+      className={`absolute rounded-[38%_62%_48%_52%] bg-gradient-to-br from-amber-200/25 via-white/15 to-blue-950/10 blur-[0.2px] ${className}`}
       animate={{ y: [0, -18, 0], rotate: [0, 6, -2, 0], scale: [1, 1.04, 1] }}
       transition={{ duration: 7, repeat: Infinity, delay, ease: "easeInOut" }}
     />
+  );
+}
+
+function Balloon({ className = "", color = "#081832", delay = 0 }) {
+  return (
+    <motion.div
+      className={`absolute ${className}`}
+      animate={{ y: [0, -14, 0], rotate: [-2, 3, -2] }}
+      transition={{ duration: 6.5, repeat: Infinity, delay, ease: "easeInOut" }}
+    >
+      <div className="relative h-full w-full rounded-[50%_50%_46%_46%] shadow-2xl" style={{ background: `radial-gradient(circle at 35% 22%, rgba(255,255,255,.35), transparent 18%), ${color}` }}>
+        <div className="absolute bottom-[-7px] left-1/2 h-0 w-0 -translate-x-1/2 border-l-[6px] border-r-[6px] border-t-[10px] border-l-transparent border-r-transparent" style={{ borderTopColor: color }} />
+        <div className="absolute left-1/2 top-full h-20 w-px -translate-x-1/2 bg-white/25" />
+      </div>
+    </motion.div>
   );
 }
 
@@ -245,10 +260,13 @@ export default function Kenes50Invitation() {
         <span>{isMusicPlaying ? t.musicOff : t.musicOn}</span>
       </button>
       <section className="relative min-h-screen px-4 py-6 text-white sm:px-8 lg:px-12">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(245,158,11,0.28),transparent_32%),radial-gradient(circle_at_82%_10%,rgba(255,255,255,0.13),transparent_22%),linear-gradient(135deg,#1d1712_0%,#3b2c20_42%,#0e0d0b_100%)]" />
-        <div className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(90deg,rgba(255,255,255,.7)_1px,transparent_1px),linear-gradient(rgba(255,255,255,.7)_1px,transparent_1px)] [background-size:72px_72px]" />
-        <FloatingStone className="left-8 top-24 h-24 w-28" />
-        <FloatingStone className="right-12 top-36 h-16 w-20" delay={1.4} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,244,214,0.34),transparent_28%),radial-gradient(circle_at_18%_28%,rgba(199,154,66,0.22),transparent_30%),radial-gradient(circle_at_86%_18%,rgba(8,24,50,0.72),transparent_28%),linear-gradient(135deg,#0a1224_0%,#1b263d_30%,#c5a15a_62%,#f8f0df_100%)]" />
+        <div className="absolute inset-0 opacity-[0.22] [background-image:linear-gradient(90deg,rgba(255,255,255,.55)_1px,transparent_1px),linear-gradient(rgba(255,255,255,.55)_1px,transparent_1px)] [background-size:74px_74px]" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#f6efe4] via-transparent to-transparent" />
+        <Balloon className="left-4 top-20 h-28 w-24 sm:left-10 sm:h-36 sm:w-28" color="#071832" />
+        <Balloon className="left-20 top-10 h-24 w-20 sm:left-32 sm:h-32 sm:w-24" color="#c79a42" delay={1.2} />
+        <Balloon className="right-5 top-16 h-28 w-24 sm:right-12 sm:h-36 sm:w-28" color="#071832" delay={0.6} />
+        <Balloon className="right-24 top-28 h-20 w-16 sm:right-40 sm:h-28 sm:w-22" color="#c79a42" delay={1.8} />
         <FloatingStone className="bottom-24 left-1/4 h-20 w-24" delay={2.7} />
         <FloatingStone className="bottom-36 right-1/4 h-12 w-16" delay={0.8} />
 
@@ -259,8 +277,8 @@ export default function Kenes50Invitation() {
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3"
             >
-              <div className="grid h-12 w-12 place-items-center rounded-2xl border border-white/15 bg-white/10 shadow-2xl backdrop-blur-xl">
-                <Sparkles className="h-6 w-6 text-amber-200" />
+              <div className="grid h-12 w-12 place-items-center rounded-2xl border border-amber-200/35 bg-white/15 shadow-2xl backdrop-blur-xl">
+                <Sparkles className="h-6 w-6 text-amber-100" />
               </div>
               <div>
                 <div className="text-sm font-semibold tracking-[0.28em] text-amber-100">KENES</div>
@@ -296,7 +314,7 @@ export default function Kenes50Invitation() {
                 initial={{ opacity: 0, y: 28 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.1 }}
-                className="max-w-4xl text-5xl font-semibold leading-[0.95] tracking-[-0.06em] sm:text-7xl lg:text-8xl"
+                className="max-w-4xl text-5xl font-semibold leading-[0.95] tracking-[-0.06em] text-[#fff7e8] drop-shadow-[0_12px_35px_rgba(0,0,0,.35)] sm:text-7xl lg:text-8xl"
               >
                 {t.title}
               </motion.h1>
@@ -350,18 +368,35 @@ export default function Kenes50Invitation() {
               initial={{ opacity: 0, scale: 0.92, rotate: -2 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
               transition={{ duration: 0.9, delay: 0.18 }}
-              className="relative mx-auto w-full max-w-[520px]"
+              className="relative mx-auto w-full max-w-[540px]"
             >
-              <div className="absolute -inset-4 rounded-[3rem] bg-amber-200/20 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[2.8rem] border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-2xl">
-                <div className="rounded-[2.1rem] border border-amber-100/20 bg-[linear-gradient(160deg,rgba(255,255,255,.18),rgba(255,255,255,.05))] p-7 text-center">
-                  <div className="mx-auto grid h-28 w-28 place-items-center rounded-full border border-amber-100/25 bg-amber-100/10 text-5xl font-semibold text-amber-100 shadow-2xl">
-                    50
+              <div className="absolute -inset-5 rounded-[3rem] bg-amber-200/25 blur-3xl" />
+              <div className="relative min-h-[560px] overflow-hidden rounded-[2.8rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(255,248,232,.94),rgba(248,239,220,.86))] p-5 shadow-2xl shadow-stone-950/35 backdrop-blur-2xl">
+                <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_20%_20%,rgba(199,154,66,.35)_0,transparent_24%),radial-gradient(circle_at_80%_10%,rgba(8,24,50,.25)_0,transparent_22%)]" />
+                <div className="absolute -left-8 bottom-28 flex rotate-[-18deg] gap-1">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <span key={`left-${i}`} className={`block h-12 w-12 rounded-full shadow-xl ${i % 2 ? "bg-[#c79a42]" : "bg-[#071832]"}`} />
+                  ))}
+                </div>
+                <div className="absolute -right-8 bottom-28 flex rotate-[18deg] gap-1">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <span key={`right-${i}`} className={`block h-12 w-12 rounded-full shadow-xl ${i % 2 ? "bg-[#071832]" : "bg-[#c79a42]"}`} />
+                  ))}
+                </div>
+                <div className="relative z-10 rounded-[2.1rem] border border-amber-300/50 bg-[#fffaf0]/85 p-7 text-center shadow-inner">
+                  <div className="mx-auto mb-5 h-px w-40 bg-gradient-to-r from-transparent via-[#c79a42] to-transparent" />
+                  <div className="font-serif text-5xl italic tracking-[-0.04em] text-[#a5782f] sm:text-6xl">Кенес</div>
+                  <div className="mt-1 flex items-end justify-center gap-4">
+                    <span className="font-serif text-8xl font-bold leading-none tracking-[-0.08em] text-[#b78632] drop-shadow-sm sm:text-[9rem]">50</span>
+                    <span className="pb-5 font-serif text-4xl italic text-[#a5782f] sm:text-5xl">Жас</span>
                   </div>
-                  <div className="mt-7 text-sm uppercase tracking-[0.35em] text-amber-100/75">{t.badge}</div>
-                  <div className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">Kenes</div>
-                  <div className="mx-auto mt-5 h-px w-24 bg-gradient-to-r from-transparent via-amber-100/80 to-transparent" />
-                  <p className="mx-auto mt-5 max-w-sm text-balance text-base leading-7 text-white/72">{t.familyLine}</p>
+                  <div className="mx-auto mt-3 h-px w-44 bg-gradient-to-r from-transparent via-[#c79a42] to-transparent" />
+                  <p className="mx-auto mt-6 max-w-sm text-balance text-base leading-7 text-stone-700">{t.familyLine}</p>
+                </div>
+                <div className="relative z-10 mt-8 rounded-[2rem] border border-[#c79a42]/25 bg-[#071832] p-5 text-center text-white shadow-2xl">
+                  <div className="text-sm uppercase tracking-[0.3em] text-amber-100/80">{t.badge}</div>
+                  <div className="mt-2 text-lg text-white/75">{t.date} • {t.time}</div>
+                  <div className="mt-1 text-sm text-white/55">{t.place}</div>
                 </div>
               </div>
             </motion.div>
