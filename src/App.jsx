@@ -1,15 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { CalendarDays, MapPin, Clock, Heart, ChevronDown, Navigation, Sparkles, Languages, Copy, Check, Music2 } from "lucide-react";
+import { CalendarDays, MapPin, Clock, Heart, ChevronDown, Navigation, Sparkles, Languages, Copy, Check, Music2, PlayCircle, PauseCircle } from "lucide-react";
 
-const EVENT_DATE_ISO = "2026-07-10T17:00:00+05:00";
+const EVENT_DATE_ISO = "2026-07-10T17:00:00+05:00"; // Уақытын өзгерту керек болса: 17:00 орнына нақты уақытты қойыңыз
 const TWO_GIS_URL = "https://go.2gis.com/j9peu";
-const MAP_EMBED_URL = "https://2gis.kz/kostanay/geo/70000001036916193/63.619678,53.240314";
-const PHONE_WHATSAPP = "77072353517";
+// 2GIS не разрешает открываться внутри iframe, поэтому карту показываем через OpenStreetMap, а кнопку оставляем на 2GIS
 const OSM_MAP_URL = "https://www.openstreetmap.org/export/embed.html?bbox=63.613678%2C53.237314%2C63.625678%2C53.243314&layer=mapnik&marker=53.240314%2C63.619678";
+const PHONE_WHATSAPP = "77072353517"; // WhatsApp нөмірі: +7 707 235 3517
+const MUSIC_URL = "/music.mp3"; // public/music.mp3 файлын осы атпен салыңыз
 
 const content = {
   kz: {
+    langLabel: "Қазақша",
     topNote: "Арнайы шақыру",
     title: "Кенестің 50 жас мерейтойы",
     subtitle: "Асқар тау әкеміздің мерейлі жасына арналған салтанатты ақ дастархан",
@@ -22,6 +24,7 @@ const content = {
     inviteText:
       "Құрметті ағайын-туыс, бауырлар, нағашы-жиендер, бөлелер, құда-жекжаттар, дос-жарандар, қадірлі әріптестер мен жолдастар! Сіздерді асқар тау әкеміз Кенестің 50 жас мерейтойына арналған салтанатты ақ дастарханымыздың қадірлі қонағы болуға шақырамыз.",
     familyLine: "Ізгі ниетпен, той иелері",
+    countdownTitle: "Тойға дейін",
     days: "күн",
     hours: "сағат",
     minutes: "минут",
@@ -41,9 +44,12 @@ const content = {
     rsvpQuestion: "Тойға келесіз бе?",
     rsvpOptions: ["Иә, әрине, келемін", "Жұбайыммен келемін", "Өкінішке орай, келе алмаймын"],
     sendRsvp: "Жіберу",
-    rsvpSent: "Жауабыңыз дайын! WhatsApp ашылады"
+    rsvpSent: "Жауабыңыз дайын! WhatsApp ашылады",
+    musicOn: "Музыканы қосу",
+    musicOff: "Музыканы өшіру"
   },
   ru: {
+    langLabel: "Русский",
     topNote: "Персональное приглашение",
     title: "50-летний юбилей Кенеса",
     subtitle: "Торжественный дастархан в честь юбилея нашего дорогого отца",
@@ -56,6 +62,7 @@ const content = {
     inviteText:
       "Уважаемые родственники, братья и сестры, племянники, сваты, друзья, дорогие коллеги и близкие! Приглашаем вас стать почётными гостями торжественного дастархана, посвящённого 50-летнему юбилею нашего дорогого отца Кенеса.",
     familyLine: "С уважением, хозяева торжества",
+    countdownTitle: "До торжества осталось",
     days: "дней",
     hours: "часов",
     minutes: "минут",
@@ -75,7 +82,9 @@ const content = {
     rsvpQuestion: "Вы будете на торжестве?",
     rsvpOptions: ["Да, конечно, приду", "Приду с супругой/супругом", "К сожалению, не смогу прийти"],
     sendRsvp: "Отправить",
-    rsvpSent: "Ответ готов! Откроется WhatsApp"
+    rsvpSent: "Ответ готов! Откроется WhatsApp",
+    musicOn: "Включить музыку",
+    musicOff: "Выключить музыку"
   }
 };
 
@@ -83,18 +92,23 @@ function cn(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-function Button({ children, className = "", as = "button", ...props }) {
-  const Component = as;
+function Button({ children, className = "", asChild = false, variant, ...props }) {
+  const baseClass = cn(
+    "inline-flex items-center justify-center rounded-full border border-transparent font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-2 focus:ring-offset-stone-950",
+    className
+  );
+
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      ...props,
+      className: cn(baseClass, children.props.className || "")
+    });
+  }
+
   return (
-    <Component
-      className={cn(
-        "inline-flex items-center justify-center rounded-full border border-transparent px-6 py-3 font-semibold transition focus:outline-none focus:ring-2 focus:ring-amber-200 focus:ring-offset-2 focus:ring-offset-stone-950",
-        className
-      )}
-      {...props}
-    >
+    <button className={baseClass} {...props}>
       {children}
-    </Component>
+    </button>
   );
 }
 
@@ -162,6 +176,8 @@ export default function Kenes50Invitation() {
   const [guestName, setGuestName] = useState("");
   const [rsvpStatus, setRsvpStatus] = useState("");
   const [rsvpSent, setRsvpSent] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const audioRef = useRef(null);
   const t = content[lang];
 
   useEffect(() => {
@@ -198,8 +214,36 @@ export default function Kenes50Invitation() {
     setTimeout(() => setRsvpSent(false), 2200);
   };
 
+  const toggleMusic = async () => {
+    if (!audioRef.current) return;
+
+    try {
+      if (isMusicPlaying) {
+        audioRef.current.pause();
+        setIsMusicPlaying(false);
+      } else {
+        audioRef.current.volume = 0.45;
+        await audioRef.current.play();
+        setIsMusicPlaying(true);
+      }
+    } catch {
+      setIsMusicPlaying(false);
+    }
+  };
+
   return (
     <main className="min-h-screen overflow-hidden bg-[#15120f] text-stone-950">
+      <audio ref={audioRef} src={MUSIC_URL} loop preload="auto" />
+      <button
+        onClick={toggleMusic}
+        className="fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-amber-200/40 bg-stone-950 px-5 py-4 text-sm font-semibold text-white shadow-2xl shadow-stone-950/40 backdrop-blur-xl transition hover:scale-[1.02] hover:bg-stone-800 sm:text-base"
+      >
+        <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-amber-200 text-stone-950">
+          <span className={`absolute inset-0 rounded-full bg-amber-200 ${isMusicPlaying ? "animate-ping opacity-40" : ""}`} />
+          {isMusicPlaying ? <PauseCircle className="relative h-6 w-6" /> : <PlayCircle className="relative h-6 w-6" />}
+        </span>
+        <span>{isMusicPlaying ? t.musicOff : t.musicOn}</span>
+      </button>
       <section className="relative min-h-screen px-4 py-6 text-white sm:px-8 lg:px-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(245,158,11,0.28),transparent_32%),radial-gradient(circle_at_82%_10%,rgba(255,255,255,0.13),transparent_22%),linear-gradient(135deg,#1d1712_0%,#3b2c20_42%,#0e0d0b_100%)]" />
         <div className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(90deg,rgba(255,255,255,.7)_1px,transparent_1px),linear-gradient(rgba(255,255,255,.7)_1px,transparent_1px)] [background-size:72px_72px]" />
@@ -283,15 +327,19 @@ export default function Kenes50Invitation() {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 className="mt-9 flex flex-wrap gap-3"
               >
-                <Button as="a" href={TWO_GIS_URL} target="_blank" rel="noreferrer" className="bg-amber-200 px-6 py-4 text-base text-stone-950 hover:bg-amber-100">
-                  <Navigation className="mr-2 h-5 w-5" />
-                  {t.openMap}
+                <Button asChild className="rounded-full bg-amber-200 px-6 py-6 text-base font-semibold text-stone-950 hover:bg-amber-100">
+                  <a href={TWO_GIS_URL} target="_blank" rel="noreferrer">
+                    <Navigation className="mr-2 h-5 w-5" />
+                    {t.openMap}
+                  </a>
                 </Button>
-                <Button as="a" href={whatsappText} target="_blank" rel="noreferrer" className="border-white/20 bg-white/10 px-6 py-4 text-base text-white backdrop-blur-xl hover:bg-white/15">
-                  <Heart className="mr-2 h-5 w-5" />
-                  {t.whatsapp}
+                <Button asChild variant="outline" className="rounded-full border-white/20 bg-white/10 px-6 py-6 text-base font-semibold text-white backdrop-blur-xl hover:bg-white/15 hover:text-white">
+                  <a href={whatsappText} target="_blank" rel="noreferrer">
+                    <Heart className="mr-2 h-5 w-5" />
+                    {t.whatsapp}
+                  </a>
                 </Button>
-                <Button onClick={handleCopy} className="border-white/20 bg-white/10 px-6 py-4 text-base text-white backdrop-blur-xl hover:bg-white/15">
+                <Button onClick={handleCopy} variant="outline" className="rounded-full border-white/20 bg-white/10 px-6 py-6 text-base font-semibold text-white backdrop-blur-xl hover:bg-white/15 hover:text-white">
                   {copied ? <Check className="mr-2 h-5 w-5" /> : <Copy className="mr-2 h-5 w-5" />}
                   {copied ? t.copied : t.copyLink}
                 </Button>
@@ -417,7 +465,7 @@ export default function Kenes50Invitation() {
                 </div>
               </div>
 
-              <Button type="submit" className="mt-8 w-full rounded-3xl bg-[#6f5749] py-6 text-lg text-white shadow-xl hover:bg-[#5d493d]">
+              <Button type="submit" className="mt-8 w-full rounded-3xl bg-[#6f5749] py-7 text-lg font-semibold text-white shadow-xl hover:bg-[#5d493d]">
                 {rsvpSent ? t.rsvpSent : t.sendRsvp}
               </Button>
             </form>
@@ -469,23 +517,25 @@ export default function Kenes50Invitation() {
                   <p className="mt-1 text-stone-500">{t.address}</p>
                 </div>
               </div>
-              <Button as="a" href={TWO_GIS_URL} target="_blank" rel="noreferrer" className="mt-7 w-full rounded-2xl bg-stone-950 py-4 text-base text-white hover:bg-stone-800">
-                <Navigation className="mr-2 h-5 w-5" />
-                {t.openMap}
+              <Button asChild className="mt-7 w-full rounded-2xl bg-stone-950 py-6 text-base font-semibold text-white hover:bg-stone-800">
+                <a href={TWO_GIS_URL} target="_blank" rel="noreferrer">
+                  <Navigation className="mr-2 h-5 w-5" />
+                  {t.openMap}
+                </a>
               </Button>
             </div>
             <div className="relative h-80 overflow-hidden bg-stone-200">
-  <iframe
-    title="Карта места проведения"
-    src={OSM_MAP_URL}
-    className="h-full w-full border-0"
-    loading="lazy"
-  />
-  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white/80 to-transparent" />
-  <div className="absolute left-4 top-4 rounded-2xl bg-white/90 px-4 py-3 text-sm font-semibold text-stone-800 shadow-xl backdrop-blur-xl">
-    {t.place}
-  </div>
-</div>
+              <iframe
+                title="Карта места проведения"
+                src={OSM_MAP_URL}
+                className="h-full w-full border-0"
+                loading="lazy"
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white/80 to-transparent" />
+              <div className="absolute left-4 top-4 rounded-2xl bg-white/90 px-4 py-3 text-sm font-semibold text-stone-800 shadow-xl backdrop-blur-xl">
+                {t.place}
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
