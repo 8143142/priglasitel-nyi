@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays, MapPin, Clock, Heart, ChevronDown, Navigation, Sparkles, Languages, Copy, Check, Music2 } from "lucide-react";
 
-const EVENT_DATE_ISO = "2026-07-10T18:00:00+05:00";
+const EVENT_DATE_ISO = "2026-07-10T17:00:00+05:00";
 const TWO_GIS_URL = "https://go.2gis.com/j9peu";
 const MAP_EMBED_URL = "https://2gis.kz/kostanay/geo/70000001036916193/63.619678,53.240314";
 const PHONE_WHATSAPP = "77072353517";
+const OSM_MAP_URL = "https://www.openstreetmap.org/export/embed.html?bbox=63.613678%2C53.237314%2C63.625678%2C53.243314&layer=mapnik&marker=53.240314%2C63.619678";
 
 const content = {
   kz: {
@@ -14,7 +15,7 @@ const content = {
     subtitle: "Асқар тау әкеміздің мерейлі жасына арналған салтанатты ақ дастархан",
     badge: "50 жас",
     date: "10 шілде 2026",
-    time: "18:00",
+    time: "17:00",
     place: "«Ралина» банкет залы",
     address: "«Ралина» банкет залы, Қамшат Дөненбаева көшесі, 99, Қостанай",
     inviteTitle: "Қадірлі қонағымыз болыңыз!",
@@ -48,7 +49,7 @@ const content = {
     subtitle: "Торжественный дастархан в честь юбилея нашего дорогого отца",
     badge: "50 лет",
     date: "10 июля 2026",
-    time: "18:00",
+    time: "17:00",
     place: "банкетный зал «Ралина»",
     address: "Банкетный зал «Ралина», улица Камшат Доненбаевой, 99, Костанай",
     inviteTitle: "Будьте нашим дорогим гостем!",
@@ -473,15 +474,18 @@ export default function Kenes50Invitation() {
                 {t.openMap}
               </Button>
             </div>
-            <div className="relative h-80 bg-stone-200">
-              <iframe
-                title="2GIS map"
-                src={MAP_EMBED_URL}
-                className="h-full w-full border-0"
-                loading="lazy"
-              />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white/80 to-transparent" />
-            </div>
+            <div className="relative h-80 overflow-hidden bg-stone-200">
+  <iframe
+    title="Карта места проведения"
+    src={OSM_MAP_URL}
+    className="h-full w-full border-0"
+    loading="lazy"
+  />
+  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white/80 to-transparent" />
+  <div className="absolute left-4 top-4 rounded-2xl bg-white/90 px-4 py-3 text-sm font-semibold text-stone-800 shadow-xl backdrop-blur-xl">
+    {t.place}
+  </div>
+</div>
           </motion.div>
         </div>
       </section>
