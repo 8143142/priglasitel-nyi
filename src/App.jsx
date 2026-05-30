@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { CalendarDays, MapPin, Clock, Heart, ChevronDown, Navigation, Sparkles, Languages, Copy, Check, Music2, PlayCircle, PauseCircle } from "lucide-react";
 
-const EVENT_DATE_ISO = "2026-07-10T17:00:00+05:00"; // Уақытын өзгерту керек болса: 17:00 орнына нақты уақытты қойыңыз
+const EVENT_DATE_ISO = "2026-07-11T17:00:00+05:00"; // Уақытын өзгерту керек болса: 17:00 орнына нақты уақытты қойыңыз
 const TWO_GIS_URL = "https://go.2gis.com/j9peu";
 // 2GIS не разрешает открываться внутри iframe, поэтому карту показываем через OpenStreetMap, а кнопку оставляем на 2GIS
 const OSM_MAP_URL = "https://www.openstreetmap.org/export/embed.html?bbox=63.613678%2C53.237314%2C63.625678%2C53.243314&layer=mapnik&marker=53.240314%2C63.619678";
-const PHONE_WHATSAPP = "77072353517"; // WhatsApp нөмірі: +7 707 235 3517
+const PHONE_WHATSAPP = "77776397451"; // WhatsApp нөмірі: +7 777 639 7451
+const HERO_IMAGE_URL = "/kenes-photo.jpg"; // public/kenes-photo.jpg файлын осы атпен салыңыз
 const MUSIC_URL = "/music.mp3"; // public/music.mp3 файлын осы атпен салыңыз
 
 const content = {
@@ -16,7 +17,7 @@ const content = {
     title: "Кенестің 50 жас мерейтойы",
     subtitle: "Асқар тау әкеміздің мерейлі жасына арналған салтанатты ақ дастархан",
     badge: "50 жас",
-    date: "10 шілде 2026",
+    date: "11 шілде 2026",
     time: "17:00",
     place: "«Ралина» банкет залы",
     address: "«Ралина» банкет залы, Қамшат Дөненбаева көшесі, 99, Қостанай",
@@ -54,7 +55,7 @@ const content = {
     title: "50-летний юбилей Кенеса",
     subtitle: "Торжественный дастархан в честь юбилея нашего дорогого отца",
     badge: "50 лет",
-    date: "10 июля 2026",
+    date: "11 июля 2026",
     time: "17:00",
     place: "банкетный зал «Ралина»",
     address: "Банкетный зал «Ралина», улица Камшат Доненбаевой, 99, Костанай",
@@ -370,33 +371,28 @@ export default function Kenes50Invitation() {
               transition={{ duration: 0.9, delay: 0.18 }}
               className="relative mx-auto w-full max-w-[540px]"
             >
-              <div className="absolute -inset-5 rounded-[3rem] bg-amber-200/25 blur-3xl" />
-              <div className="relative min-h-[560px] overflow-hidden rounded-[2.8rem] border border-amber-100/35 bg-[linear-gradient(180deg,rgba(255,248,232,.94),rgba(248,239,220,.86))] p-5 shadow-2xl shadow-stone-950/35 backdrop-blur-2xl">
-                <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_20%_20%,rgba(199,154,66,.35)_0,transparent_24%),radial-gradient(circle_at_80%_10%,rgba(8,24,50,.25)_0,transparent_22%)]" />
-                <div className="absolute -left-8 bottom-28 flex rotate-[-18deg] gap-1">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <span key={`left-${i}`} className={`block h-12 w-12 rounded-full shadow-xl ${i % 2 ? "bg-[#c79a42]" : "bg-[#071832]"}`} />
-                  ))}
-                </div>
-                <div className="absolute -right-8 bottom-28 flex rotate-[18deg] gap-1">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <span key={`right-${i}`} className={`block h-12 w-12 rounded-full shadow-xl ${i % 2 ? "bg-[#071832]" : "bg-[#c79a42]"}`} />
-                  ))}
-                </div>
-                <div className="relative z-10 rounded-[2.1rem] border border-amber-300/50 bg-[#fffaf0]/85 p-7 text-center shadow-inner">
-                  <div className="mx-auto mb-5 h-px w-40 bg-gradient-to-r from-transparent via-[#c79a42] to-transparent" />
-                  <div className="font-serif text-5xl italic tracking-[-0.04em] text-[#a5782f] sm:text-6xl">Кенес</div>
-                  <div className="mt-1 flex items-end justify-center gap-4">
-                    <span className="font-serif text-8xl font-bold leading-none tracking-[-0.08em] text-[#b78632] drop-shadow-sm sm:text-[9rem]">50</span>
-                    <span className="pb-5 font-serif text-4xl italic text-[#a5782f] sm:text-5xl">Жас</span>
+              <div className="absolute -inset-5 rounded-[3rem] bg-[#c79a42]/30 blur-3xl" />
+              <div className="relative overflow-hidden rounded-[2.8rem] border border-amber-100/40 bg-[#071832] p-3 shadow-2xl shadow-stone-950/40 backdrop-blur-2xl">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,232,170,.28),transparent_30%),linear-gradient(180deg,rgba(7,24,50,.4),rgba(7,24,50,.92))]" />
+                <div className="relative overflow-hidden rounded-[2.25rem] border border-amber-200/35 bg-stone-950">
+                  <img
+                    src={HERO_IMAGE_URL}
+                    alt="Кенестің 50 жас мерейтойы"
+                    className="h-[640px] w-full object-cover object-top sm:h-[720px] lg:h-[690px]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#071832] via-transparent to-black/10" />
+                  <div className="absolute left-4 right-4 top-4 rounded-[1.7rem] border border-amber-100/50 bg-[#fff8e8]/90 px-5 py-4 text-center shadow-2xl backdrop-blur-md">
+                    <div className="font-serif text-4xl italic tracking-[-0.04em] text-[#a5782f] sm:text-5xl">Кенес</div>
+                    <div className="-mt-1 flex items-end justify-center gap-3">
+                      <span className="font-serif text-6xl font-bold leading-none tracking-[-0.08em] text-[#b78632] sm:text-7xl">50</span>
+                      <span className="pb-2 font-serif text-3xl italic text-[#a5782f] sm:text-4xl">Жас</span>
+                    </div>
                   </div>
-                  <div className="mx-auto mt-3 h-px w-44 bg-gradient-to-r from-transparent via-[#c79a42] to-transparent" />
-                  <p className="mx-auto mt-6 max-w-sm text-balance text-base leading-7 text-stone-700">{t.familyLine}</p>
-                </div>
-                <div className="relative z-10 mt-8 rounded-[2rem] border border-[#c79a42]/25 bg-[#071832] p-5 text-center text-white shadow-2xl">
-                  <div className="text-sm uppercase tracking-[0.3em] text-amber-100/80">{t.badge}</div>
-                  <div className="mt-2 text-lg text-white/75">{t.date} • {t.time}</div>
-                  <div className="mt-1 text-sm text-white/55">{t.place}</div>
+                  <div className="absolute bottom-4 left-4 right-4 rounded-[1.7rem] border border-amber-200/25 bg-[#071832]/90 p-5 text-center text-white shadow-2xl backdrop-blur-md">
+                    <div className="text-xs uppercase tracking-[0.32em] text-amber-100/80">{t.badge}</div>
+                    <div className="mt-2 text-lg font-semibold text-white">{t.date} • {t.time}</div>
+                    <div className="mt-1 text-sm text-white/65">{t.place}</div>
+                  </div>
                 </div>
               </div>
             </motion.div>
